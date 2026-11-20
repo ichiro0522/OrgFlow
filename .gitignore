@@ -1,0 +1,25 @@
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Environment / secrets
+.env
+.env.*
+!.env.example
+
+# Dependencies
+vendor/
+node_modules/
+
+# Build / coverage / cache
+coverage/
+dist/
+build/
+*.cache
+phpunit.result.cache
+
+# Logs
+*.log
+storage/logs/
