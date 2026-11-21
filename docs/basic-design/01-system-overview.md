@@ -10,7 +10,8 @@
 - 業種固有ルールを業務モジュール外に閉じ込める。
 - モジュラモノリスを採用し、初期段階のマイクロサービス化は行わない。
 - テナントごとの組織構造、ワークフロー、契約機能を設定可能にする。
-- Cloud/On-premisesで環境差をアダプターで吸収する。
+- 初期公開先をCloudflare Pages、Workers、D1とし、環境依存処理はアダプターで分離する。
+- Cloud/On-premises対応方針は維持するが、Cloudflare以外の実行環境・DBアダプターは未決定とする。
 
 ## 3. 機能概要
 共通基盤はテナント、ユーザー、認証、権限、通知、ファイル、操作ログ、監査、ダッシュボード、モジュール、契約プランを扱う。初期業務候補は社員、組織、報告、ワークフローとし、休暇申請、Wiki、タスク等は将来モジュールとする。
@@ -26,11 +27,11 @@
 
 ```mermaid
 flowchart LR
-  User[利用者] --> UI[Vue.js SPA]
-  UI --> API[REST API /api/v1]
+  User[利用者] --> UI[Vue.js + TypeScript SPA / Pages]
+  UI --> API[TypeScript REST API /api/v1 / Workers]
   API --> Core[Core基盤]
   API --> Modules[業務モジュール]
-  Core --> DB[(PostgreSQL)]
+  Core --> DB[(Cloudflare D1)]
   Modules --> DB
 ```
 
@@ -51,5 +52,7 @@ flowchart LR
 ## 10. 未決定事項
 - 認証方式・セッション方式・トークン方式
 - テナント識別方法
-- Laravel/PHP/Vue/PostgreSQLの具体バージョン
+- TypeScript、Vue.js、Workers互換性の具体バージョン
+- Workers APIのフレームワーク、D1のアクセス方式
+- Cloudflare以外の実行環境・DBアダプターとオンプレミス対応方法
 - 個人情報項目、保持期間、マスキング方式

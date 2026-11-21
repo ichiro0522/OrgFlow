@@ -35,7 +35,7 @@ sequenceDiagram
 ```
 
 ## 4. 処理概要
-Controllerは入力受付とレスポンス変換、Application Serviceはユースケース、Domainは業務ルールを実行する。共通ミドルウェアで認証、テナント、相関ID、エラー形式を処理する。
+Cloudflare WorkerのRoute Handlerは入力受付とレスポンス変換、Application Serviceはユースケース、Domainは業務ルールを実行する。共通処理で認証、テナント、相関ID、エラー形式を扱う。Workers固有のAPIや環境バインディングはInfrastructureに閉じ込める。
 
 ## 5. 共通レスポンス方針
 - 成功: `data`、必要に応じ`meta`。
@@ -57,4 +57,5 @@ Controllerは入力受付とレスポンス変換、Application Serviceはユー
 - 共通エラーコード体系の完全一覧
 - レート制限方式
 - API認証方式
+- Workers APIのルーティング／ミドルウェア方式
 - Webhook・非同期ジョブAPI方式

@@ -14,11 +14,15 @@
 
 ## 基本方針
 - モジュラモノリス
-- PHP/Laravel、Vue.js、PostgreSQL、REST API
-- DB主キーUUID原則
-- クラウド・オンプレミス対応
+- TypeScript、Vue.js、REST API
+- 初期公開先はCloudflare Pages（画面配信）、Workers（API）、D1（SQLite互換DB）とする
+- DB主キーはUUIDを原則とし、D1では標準形式の文字列として保存する
+- クラウド・オンプレミス対応は維持するが、Cloudflare以外の実行環境・DBアダプターは未決定
 - 将来モジュール、契約プラン、AIを疎結合に追加可能
 
 ## 未決定事項
-- Laravel、PHP、Vue、PostgreSQLの具体バージョン
+- TypeScript、Vue.js、Workers互換性の具体バージョン
+- Workers APIのフレームワーク、D1のアクセス・マイグレーション方式
+- Cloudflare以外の実行環境・DBアダプターとオンプレミス対応方法
 - 認証方式、テナント識別方式、個人情報保持方針
+- 無料枠上限を超過した場合の運用・有料化判断

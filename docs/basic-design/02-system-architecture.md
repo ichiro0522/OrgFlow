@@ -10,15 +10,17 @@
 - Core、Modules、Infrastructure、Frontendの依存方向を限定。
 - 内部モジュール参照は公開ユースケースまたはドメインイベント経由。
 - 環境依存処理はインターフェースとアダプターで分離。
+- 初期公開先はCloudflare Workersとし、静的FrontendはCloudflare Pagesで配信する。
+- 業務ロジックをWorkers固有APIやD1固有SQLへ直接依存させない。
 
 ## 3. 機能概要
-BackendはHTTP受付、ユースケース、ドメイン、永続化境界、外部連携を単一デプロイユニット内に配置する。Frontendは共通Core UIと業務モジュールUIへ分割する。
+APIはTypeScriptのCloudflare Workerを単一デプロイユニットとし、HTTP受付、ユースケース、ドメイン、永続化境界、外部連携を配置する。FrontendはVue.jsとTypeScriptによるSPAとし、共通Core UIと業務モジュールUIへ分割する。
 
 ```mermaid
 flowchart TB
-  Browser[Vue.js SPA] --> HTTP[REST API]
-  subgraph Backend[Laravel Backend]
-    Controller[Controller]
+  Browser[Vue.js + TypeScript SPA / Pages] --> HTTP[REST API / Workers]
+  subgraph Backend[TypeScript Worker]
+    Controller[Route Handler]
     Service[Application Service]
     Domain[Domain]
     Repository[Repository]
@@ -31,11 +33,11 @@ flowchart TB
   Service --> Repository
   Core --> Repository
   Business --> Core
-  Repository --> PostgreSQL[(PostgreSQL)]
+  Repository --> D1[(Cloudflare D1)]
 ```
 
 ## 4. 処理概要
-Controllerは入力受付とレスポンス変換、Application Serviceはユースケース、Domainは業務ルール、Repositoryは永続化を担う。システム例外は共通ハンドラーが安全なレスポンスへ変換する。
+Route Handlerは入力受付とレスポンス変換、Application Serviceはユースケース、Domainは業務ルール、Repositoryは永続化を担う。D1アクセスとWorkersの環境バインディングはInfrastructureに閉じ込める。システム例外は共通ハンドラーが安全なレスポンスへ変換する。
 
 ## 5. データの流れ
 HTTPリクエストは認証・テナント・権限フィルターを通過し、テナントスコープ付きコンテキストへ変換される。永続化前にDomainルールを検証し、監査イベントを同一トランザクションまたは確実な配信経路で記録する。
@@ -58,4 +60,5 @@ HTTPリクエストは認証・テナント・権限フィルターを通過し�
 - モジュールディレクトリ名の最終構成
 - イベントバス方式
 - AI処理基盤の同期・非同期方式
-- バックエンドとFrontendのデプロイ方式
+- Workers APIのフレームワークとD1アクセス方式
+- Cloudflare以外の実行環境・DBアダプターとオンプレミス対応方法
